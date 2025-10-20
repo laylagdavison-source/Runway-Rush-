@@ -1,89 +1,115 @@
-# Project Name
-> Outline a brief description of your project.
-> Live demo [_here_](https://www.example.com). <!-- If you have the project hosted somewhere, include the link here. -->
+# Runway Rush
 
-## Table of Contents
-* [General Info](#general-information)
-* [Technologies Used](#technologies-used)
-* [Features](#features)
-* [Screenshots](#screenshots)
-* [Setup](#setup)
-* [Usage](#usage)
-* [Project Status](#project-status)
-* [Room for Improvement](#room-for-improvement)
-* [Acknowledgements](#acknowledgements)
-* [Contact](#contact)
-<!-- * [License](#license) -->
+**Runway Rush** is a fast-paced collectible endless-runner style game made with **MakeCode Arcade**.  
+The player controls a fashion-forward character dodging through a scrolling runway, collecting stylish items like dresses, lipstick, and heels — all while racing against time!
 
+---
 
-## General Information
-- Provide general information about your project here.
-- What problem does it (intend to) solve?
-- What is the purpose of your project?
-- Why did you undertake it?
-<!-- You don't have to answer all the questions - just the ones relevant to your project. -->
+## Gameplay Overview
 
+When the game starts, a **countdown (3…2…1)** appears before the action begins.  
+The background scrolls continuously to create a runway effect while collectible items spawn randomly for the player to grab.
 
-## Technologies Used
-- Tech 1 - version 1.0
-- Tech 2 - version 2.0
-- Tech 3 - version 3.0
+Each time the player collects an item, their **score increases by +1**, and a satisfying **“ding” sound** plays.
 
+Your goal?  
+Collect as many fashion items as possible before the runway ends!
+
+---
 
 ## Features
-List the ready features here:
-- Awesome feature 1
-- Awesome feature 2
-- Awesome feature 3
 
+- **Starting Countdown** – The game flashes “3”, “2”, “1” before gameplay begins.  
+- **Smooth Scrolling Background** – Two background images loop endlessly to simulate a moving runway.  
+- **Collectible System** – Randomized fashion items (dress, lipstick, shirt, glasses, heels, bow, shorts) appear periodically.  
+- **Score Tracker** – Player’s score updates in real time.  
+- **Sound Effects** – Positive audio feedback when items are collected.  
+- **Simple Controls** – Move the character **up and down** to collect items and avoid missing them.
 
-## Screenshots
-![Example screenshot](./img/screenshot.png)
-<!-- If you have screenshots you'd like to share, include them here. -->
+---
 
+## Controls
 
-## Setup
-What are the project requirements/dependencies? Where are they listed? A requirements.txt or a Pipfile.lock file perhaps? Where is it located?
+| Action | Key | Description |
+|--------|-----|-------------|
+| Move Up | ⬆️ | Move player up the runway |
+| Move Down | ⬇️ | Move player down the runway |
 
-Proceed to describe how to install / setup one's local environment / get started with the project.
+---
 
+## How It Works
 
-## Usage
-How does one go about using it?
-Provide various use cases and code examples here.
+1. **Sprite Setup:**  
+   - The player sprite represents the character.  
+   - Fashion items are stored in a list of collectables.  
+   - Background sprites scroll at a constant speed.
 
-`write-your-code-here`
+2. **Game Loop:**  
+   - Two background sprites alternate to create a continuous scrolling effect.  
+   - A timed update spawns random collectible sprites from the list.  
+   - The last two spawned items are tracked to avoid repetition.
 
+3. **Collision Logic:**  
+   - When the player overlaps with a collectible, the item resets off-screen, velocity stops, and the score increases.
 
-## Project Status
-Project is: _in progress_ / _complete_ / _no longer being worked on_. If you are no longer working on it, provide reasons why.
+4. **Visual & Audio Feedback:**  
+   - The game displays dynamic text for countdowns and plays sound effects on item collection.
 
+---
 
-## Room for Improvement
-Include areas you believe need improvement / could be improved. Also add TODOs for future development.
+## Key Code Sections
 
-Room for improvement:
-- Improvement to be done 1
-- Improvement to be done 2
+- **Countdown Start:**
+  ```python
+  mySprite.say_text("3")
+  pause(1000)
+  mySprite.say_text("2")
+  pause(1000)
+  mySprite.say_text("1")
+  pause(1000)
+  mySprite.say_text("")
+  ```
+- **Collectible Collision:**
+  ```python
+  def on_on_overlap(player2, collectable):
+      collectable.set_position(scene.screen_width() + 16, 0)
+      collectable.set_velocity(0, 0)
+      info.change_score_by(1)
+      music.ba_ding.play()
+  
+  sprites.on_overlap(SpriteKind.player, SpriteKind.Collectable, on_on_overlap)
+  ```
+- **Random Spawning:**
+  ```python
+  def on_update_interval():
+      global n, collectable_sprite
+      n = randint(0, len(collectables) - 1)
+      while last_two_sprites.index_of(n) >= 0:
+          n = randint(0, len(collectables) - 1)
+      last_two_sprites[1] = last_two_sprites[0]
+      last_two_sprites[0] = n
+      collectable_sprite = collectables[n]
+      collectable_sprite.set_position(scene.screen_width() + 16,
+          randint(16, scene.screen_height() - 16))
+      collectable_sprite.vx = bgSprite1.vx
+  
+  game.on_update_interval(1500, on_update_interval)
+  ```
 
-To do:
-- Feature to be added 1
-- Feature to be added 2
+## How to run the game
+- Go to https://arcade.makecode.com/
+- Click *New Project* and select Python mode
 
+## Assets
+- **Custom background**: scrolling runway
+- **Player sprite**: custom fashion character
+- **Collectibles**: dress, lipstick, shirt, glasses, heels, bow, shorts
 
-## Acknowledgements
-Give credit here.
-- This project was inspired by...
-- This project was based on [this tutorial](https://www.example.com).
-- Many thanks to...
+## Future Improvements
+- Add obstacles (e.g., paparazzi or flashing cameras)
+- Introduce levels or timed challenges
+- Add combo bonuses for collecting themed sets
+- Include power-ups or speed boosts
 
-
-## Contact
-Created by [@flynerdpl](https://www.flynerd.pl/) - feel free to contact me!
-
-
-<!-- Optional -->
-<!-- ## License -->
-<!-- This project is open source and available under the [... License](). -->
-
-<!-- You don't have to include all sections - just the one's relevant to your project -->
+## Created By
+Layla Davison :)
